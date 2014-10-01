@@ -1,0 +1,20 @@
+<div class="head">
+  <ul>
+    <li>
+      <a class="refresh" href="#refresh">새로고침</a>
+      <a class="close" href="#close">닫기</a>
+    </il>
+  </ul>
+</div>
+
+<div class="content">
+  <ul>
+    <% for img in @list : %>
+      <li>
+        <a class="random-select" href="#random-select">
+        <img src="http://img.gom.heyo.me/thumb.php?width=80&height=80&opt=<%- img[0]%>&url=<%- encodeURIComponent(img[1])%>" select_id="<%- img[0]%>" select_img="<%- img[1]%>"/>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</div>

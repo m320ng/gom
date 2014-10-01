@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html class="ui-mobile">
+<head>
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<title></title>
+<link rel="stylesheet" type="text/css" href="http://sub.heyo.me/heyo.me/css/webpage.css" />
+<link rel="stylesheet" type="text/css" href="http://sub.heyo.me/heyo.me/css/mobile/jquery/jquery.mobile-1.0.min.css" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/jquery/jquery.form.js"></script>
+<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/jquery/blockUI/jquery.blockUI.js"></script>
+<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/jquery/jquery.cookie.js"></script>
+<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/jquery/ajaxfileupload.js"></script>
+<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/common.js"></script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-19661113-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type="text/javascript">
+(function($) {
+	$.mobile = {loadingMessage:'잠시만 기다려주세요.'};
+	var $loader = $( "<div class='ui-loader ui-body-a ui-corner-all'><span class='ui-icon ui-icon-loading spin'></span><h1></h1></div>" );
+	$.extend($.mobile, {
+		// turn on/off page loading message.
+		showPageLoadingMsg: function() {
+			if ($.mobile.loadingMessage) {
+				var activeBtn = $('.ui-btn-active').first();
+				$loader
+					.find('h1')
+						.text($.mobile.loadingMessage)
+						.end()
+					.appendTo(document.body)
+					// position at y center (if scrollTop supported), above the activeBtn (if defined), or just 100px from top
+					.css({
+						top: $.support.scrollTop && $window.scrollTop() + $window.height() / 2 ||
+						activeBtn.length && activeBtn.offset().top || 100
+					});
+			}
+			$('html').addClass("ui-loading");
+		},
+		hidePageLoadingMsg: function() {
+			$('html').removeClass("ui-loading");
+		}
+	});
+
+	var deviceAgent = navigator.userAgent.toLowerCase();
+	var agentID = deviceAgent.match(/(iphone|ipod|ipad|android)/);
+	if (agentID==null) agentID = '';
+	if (agentID.indexOf("iphone")>=0) {
+		$.mobile.agent = 'iphone';
+	}
+	if (agentID.indexOf("ipod")>=0) {
+		$.mobile.agent = 'ipod';
+	}
+	if (agentID.indexOf("ipad")>=0) {
+		$.mobile.agent = 'ipad';
+	}
+	if (agentID.indexOf("android")>=0) {
+		$.mobile.agent = 'android';
+	}
+	$.mobile.ver = 'mobile';
+})(jQuery);
+</script>
+</head>
+
+<body class="ui-mobile-viewport">
+<div id="page-container" class="ui-page ui-page-active">
+  <div id="page-content">
+  <% content %>
+  </div>
+</div>
+
+</body>
+</html>
