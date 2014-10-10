@@ -4,17 +4,26 @@ var moment = require('moment');
 var scraper = require('./libs/gallery-scraper');
 var router = express.Router();
 
+var view = 'index';
+function mobile_check_filter(req, res) {
+	view = 'index';
+	if (req.hostname=='m.gom.heyo.me' || req.hostname=='m.g.heyo.me') {
+		view = 'mobile';
+	} else {
+		var agent = req.headers['user-agent'];
+		if (agent.indexOf('iPhone')!=-1 || agent.indexOf('Android')!=-1) {
+			return res.redirect('http://m.gom.heyo.me');
+		}
+	}
+}
+
 /* GET home page. */
 router.get('/:id?', function(req, res, next) {
 	var id = req.params.id;
 	if (!id) id = null;
+	mobile_check_filter(req, res);
 
-	var agent = req.headers['user-agent'];
-	if (agent.indexOf('iPhone')!=-1 || agent.indexOf('Android')!=-1) {
-		return res.redirect('http://m.gom.heyo.me');
-	}
-
-	res.render('index', {
+	res.render(view, {
 		title: 'heyo.me',
 		article_id: id,
 		day1go: moment().subtract(1, 'days').format('YYYY-MM-DD'),
@@ -25,7 +34,8 @@ router.get('/:id?', function(req, res, next) {
 
 router.get('/d/:date?', function(req, res, next) {
 	var date = req.params.date;
-	res.render('index', {
+	mobile_check_filter(req, res);
+	res.render(view, {
 		title: 'heyo.me',
 		date: date,
 		day1go: moment().subtract(1, 'days').format('YYYY-MM-DD'),
@@ -36,7 +46,8 @@ router.get('/d/:date?', function(req, res, next) {
 
 router.get('/p/:page?', function(req, res, next) {
 	var date = req.params.date;
-	res.render('index', {
+	mobile_check_filter(req, res);
+	res.render(view, {
 		title: 'heyo.me',
 		page: page,
 		day1go: moment().subtract(1, 'days').format('YYYY-MM-DD'),
@@ -46,7 +57,9 @@ router.get('/p/:page?', function(req, res, next) {
 });
 
 router.get('/pc', function(req, res, next) {
-	res.render('index', {
+	var view = 'index';
+	mobile_check_filter(req, res);
+	res.render(view, {
 		title: 'heyo.me',
 		session: req.session,
 	});

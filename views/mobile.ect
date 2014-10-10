@@ -1,0 +1,520 @@
+<% extend 'mobile_layout' %>
+
+<link rel="stylesheet" type="text/css" href="http://sub.heyo.me/heyo.me/css/mobile/style.css"/>
+<script type="text/javascript" src="/js/dcclient_mobile.js"></script>
+<script type="text/javascript">
+$(function() {
+	Client.previewImageList = false;
+	Client.init();
+	Client.article_view.beforeRender = function(article) {
+		article.content = article.content.replace(/width='[0-9]+'/gi, 'width=320');
+		article.content = article.content.replace(/width="[0-9]+"/gi, 'width=320');
+		article.content = article.content.replace(/width=[0-9]+/gi, 'width=320');
+	}
+	Client.article_view.afterRender = function(article) {
+		$('#content-view img').each(function() {
+			if ($(this).width() > 320) $(this).width(320);
+			$(this).load(function() {
+				if ($(this).width() > 320) $(this).width(320);
+			});
+		});
+	}
+
+        if ($.cookie('temp_content')) {
+                var form = document.forms['write-form'];
+                form.content.value = $.cookie('temp_content');
+                form.subject.value = $.cookie('temp_subject');
+        }
+
+	$('.ui-checkbox .ui-btn').click(function() {
+		if ($(this).prev()[0].checked) {
+			$('.ui-checkbox-off', $(this).parent()).removeClass('ui-checkbox-off').addClass('ui-checkbox-on');
+			$('.ui-icon-checkbox-off', $(this).parent()).removeClass('ui-icon-checkbox-off').addClass('ui-icon-checkbox-on');
+		} else {
+			$('.ui-checkbox-on', $(this).parent()).removeClass('ui-checkbox-on').addClass('ui-checkbox-off');
+			$('.ui-icon-checkbox-on', $(this).parent()).removeClass('ui-icon-checkbox-on').addClass('ui-icon-checkbox-off');
+		}
+	});
+	$('.ui-radio .ui-btn').click(function() {
+		$('.ui-btn', $(this).parent().parent()).removeClass('ui-radio-on').addClass('ui-radio-off');
+		$('.ui-icon', $(this).parent().parent()).removeClass('ui-icon-radio-on').addClass('ui-icon-radio-off');
+
+		$('.ui-btn', $(this).parent()).removeClass('ui-radio-off').addClass('ui-radio-on');
+		$('.ui-icon', $(this).parent()).removeClass('ui-icon-radio-off').addClass('ui-icon-radio-on');
+	});
+/*
+	var $articleToolFixed = null
+	var articleToolTimer = null;
+	$(document).bind('touchstart', function() {
+		if ($articleToolFixed) $articleToolFixed.hide();
+	});
+	$(window).bind('scroll', function() {
+		if ($articleToolFixed) $articleToolFixed.hide();
+		if (articleToolTimer) return;
+		articleToolTimer = setTimeout(function() {
+			articleToolTimer = null;
+			if (!$articleToolFixed) {
+				$articleToolFixed = $('#article-list-tool').clone();
+				$articleToolFixed.css({
+					'position':'absolute',
+					'width':'100%'
+				}).hide().appendTo($('#article-list-tool').parent());
+			}
+			if ($(window).scrollTop() > 150)  {
+				$articleToolFixed.css({
+					'top':$(window).scrollTop()
+				});
+				$articleToolFixed.fadeIn('slow');
+			}
+		}, 500);
+	});
+*/
+/*
+	$('.ui-btn-up-c').hover(function() {
+		$(this).addClass('ui-btn-hover-c');
+	},function() {
+		$(this).removeClass('ui-btn-hover-c');
+	});
+	$('.ui-btn-up-c').mousedown(function() {
+		$(this).removeClass('ui-btn-up-c').addClass('ui-btn-down-c');
+	});
+	$('.ui-btn-down-c').mouseup(function() {
+		$(this).removeClass('ui-btn-down-c').addClass('ui-btn-up-c');
+	});
+	$('a').addClass('ui-link');
+*/
+
+	$('#article-add .ui-radio input').change(function() {
+		var form = document.forms['write-form'];
+		if ($('#check-all-random')[0].checked) {
+			$('#hint-random-item').hide();
+			$('#select-random-item').hide();
+			form.rand_mode.value = 'real';
+		}
+		if ($('#check-none-random')[0].checked) {
+			$('#hint-random-item').hide();
+			$('#select-random-item').hide();
+			form.rand_mode.value = 'none';
+		}
+		if ($('#check-hint-random')[0].checked) {
+			$('#select-random-item').hide();
+			$('#hint-random-item').show();
+			form.rand_mode.value = 'hint';
+		}
+		if ($('#check-select-random')[0].checked) {
+			$('#hint-random-item').hide();
+			$('#select-random-item').show();
+			form.rand_mode.value = 'select';
+		}
+	});
+
+	$('.ui-input-text').focus(function() {
+		$(this).addClass('ui-focus');
+	});
+	$('.ui-input-text').blur(function() {
+		$(this).removeClass('ui-focus');
+	});
+
+	$('#comment-name').val(Client.udong_name);
+	$('#comment-password').val(Client.udong_password);
+	$('#comment-memo').val(Client.backup_memo);
+	$('#comment-button').bind('click', function() {
+		Client.article_view.comment_list.addCommentInput();
+	});
+
+	$('#comment-kkkk-button').click(function() {
+		$('#comment-memo').val($('#comment-memo').val()+'ㅋㅋㅋㅋㅋ')
+	});
+
+	//선택랜덤
+	$('#check-none-random').attr('checked',true);
+
+	var loadSelectRandom = function() {
+                $('#random-image-list').load('/articles/random_image_list?'+Math.random(), function() {
+			$('#random-image-list a.refresh').click(function() {
+				$('#random-image-list').html('');
+				loadSelectRandom();
+				return false;
+			});
+			$('#random-image-list a.close').click(function() {
+				return false;
+			});
+			$('#random-image-list a.random-select').click(function() {
+				$('#random-image-list .content li').removeClass('select');
+				$(this).parent().addClass('select');
+				var form = document.forms['write-form'];
+				form.rand_select_id.value = $('img', this).attr('select_id');
+				form.rand_select_img.value = $('img', this).attr('select_img');
+				return false;
+			});
+		});
+	}
+
+	$('#nav-new-article').click(function() {
+		if (!$('#random-image-list').html()) {
+			loadSelectRandom();
+		}
+		$('.article-content').hide();
+		$('#article-add').show();
+	});
+	$('#nav-notice').click(function() {
+		Client.article_notice.list('notice');
+		$('.article-content').hide();
+		$('#notice').show();
+	});
+
+        var writing = false;
+	$('#write-button').click(function() {
+                if (writing) {
+                        Client.alert('등록중입니다. 잠시만 기다려주세요.');
+                        return;
+                }
+		var form = document.forms['write-form'];
+
+		if (!form.subject.value) {
+			alert('제목을 입력해주세요.');
+			form.subject.focus();
+			return;
+		}
+		if (!form.userid.value && !form.name.value) {
+			alert('이름을 입력해주세요.');
+			form.name.focus();
+			return;
+		}
+		if (!form.content.value) {
+			alert('내용을 입력해주세요.');
+			form.content.focus();
+			return;
+		}
+		if ($.trim(form.content.value).length < 10) {
+			alert('내용을 10자이상 입력해주세요.');
+			form.content.focus();
+			return;
+		}
+
+		if (form.rand_mode.value=='hint' && !form.rand_hint.value) {
+			alert('힌트를 입력해주세요.');
+			form.rand_hint.focus();
+			return;
+		}
+		if (form.rand_mode.value=='hint' && $.trim(form.rand_hint.value).length < 2) {
+			alert('힌트를 2자이상 입력해주세요.');
+			form.rand_hint.focus();
+			return;
+		}
+		if (form.rand_mode.value=='select' && !form.rand_select_id.value) {
+			alert('선택랜덤에서 이미지를 선택해주세요.');
+			return;
+		}
+
+                $('#write-button').css('opacity', 0.5);
+                writing = true;
+
+                form.action = '/articles/add_article';
+                $(form).ajaxSubmit(function(result) {
+                        $('#write-button').css('opacity', 1);
+                        writing = false;
+                        var json = result;
+                        if (!json.success) {
+                                alert(json.message||'등록에 실패하였습니다.');
+                                $.cookie('temp_content', form.content.value);
+                                $.cookie('temp_subject', form.subject.value);
+                                return;
+                        }
+                        alert(json.message);
+
+                        $.cookie('temp_content', '');
+                        $.cookie('temp_subject', '');
+                        //form.subject.value = '';
+                        //form.content.value = '';
+                        //form.userid.value = '';
+                        $('#check-none-random').attr('checked',true);
+                        $('#check-none-random').parent().find('label').click();
+                        //form.name.value = '';
+                        Client.recent();
+                        $('.article-content').hide();$('#article').show();
+                }); 
+	});
+});
+</script>
+
+<div id="header" class="ui-header">
+  <div class="logo"><a href="/">DCBH</a></div>
+  <div class="main-menu">
+  <ul class="clearfix">
+    <% if @session['loginCookies'] : %>
+    <li class="logout"><a href="/articles/logout">LOGOUT</a></li>
+    <li class="login" style="display:none;"><a href="javascript:Client.login();">LOGIN</a></li>
+    <% else : %>
+    <li class="logout" style="display:none;"><a href="/articles/logout">LOGOUT</a></li>
+    <li class="login"><a href="javascript:Client.login();">LOGIN</a></li>
+    <% end %>
+    <li><a href="http://gall.dcinside.com/hwawon" target="_blank">갤러리</a></li>
+    <li><a href="http://gall.dcinside.com/firejung" target="_blank">FIRE정이</a></li>
+    <li><a href="http://dcbh.net">DCBH.net</a></li>
+  </ul>
+  </div>
+</div>
+
+<div id="article-container">
+  <div class="ui-navbar">
+    <ul class="ui-grid-c">
+      <li class="ui-block-a"><a class="ui-btn ui-btn-icon-top ui-btn-up-b" id="nav-new-article">
+      <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">새글</span><span class="ui-icon ui-icon-add ui-icon-shadow"></span></span>
+      </a></li>
+      <li class="ui-block-b"><a class="ui-btn ui-btn-icon-top ui-btn-up-b ui-btn-active" onclick="$('.article-content').hide();$('#article').show();">
+      <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">갤러리</span><span class="ui-icon ui-icon-home ui-icon-shadow"></span></span>
+      </a></li>
+      <li class="ui-block-c"><a class="ui-btn ui-btn-icon-top ui-btn-up-b" id="nav-notice">
+      <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">공지사항</span><span class="ui-icon ui-icon-info ui-icon-shadow"></span></span>
+      </a></li>
+      <li class="ui-block-d"><a class="ui-btn ui-btn-icon-top ui-btn-up-b" onclick="$('.article-content').hide();$('#setting').show();">
+      <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">설정</span><span class="ui-icon ui-icon-gear ui-icon-shadow"></span></span>
+      </a></li>
+    </ul>
+  </div>
+
+  <div id="article-add" class="article-content" style="display:none;">
+    <form id="WriteForm" name="write-form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="userid"/>
+    <input type="hidden" name="rand_mode" value="none"/>
+    <input type="hidden" name="rand_select_id"/>
+    <input type="hidden" name="rand_select_img"/>
+    <div class="ui-bar-d" style="padding:10px;">
+      <div class="ui-field-contain ui-body ui-br">
+        <label class="ui-input-text" for="write-form-name">이름</label>
+        <input id="write-form-name" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" type="text" name="name">
+      </div>
+      <div class="ui-field-contain ui-body ui-br">
+        <label class="ui-input-text" for="write-form-subject">제목</label>
+        <input id="write-form-subject" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" type="text" name="subject">
+      </div>
+      <div class="ui-field-contain ui-body ui-br">
+        <label class="ui-input-text" for="write-form-content">내용</label>
+        <textarea id="write-form-content" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" name="content"></textarea>
+      </div>
+  
+      <div class="ui-field-contain ui-body ui-br">
+      <fieldset class="ui-corner-all ui-controlgroup ui-controlgroup-vertical">
+        <div class="ui-controlgroup-label" role="heading">랜덤짤</div>
+        <div class="ui-controlgroup-controls">
+          <div class="ui-radio">
+            <input id="check-none-random" type="radio" value="1" name="check-random" checked="checked">
+            <label class="ui-btn ui-btn-icon-left ui-corner-top ui-radio-on ui-btn-up-c" for="check-none-random">
+            <span class="ui-btn-inner ui-corner-top" aria-hidden="true">
+            <span class="ui-btn-text">선택안함</span>
+            <span class="ui-icon ui-icon-shadow ui-icon-radio-on"></span>
+            </span>
+            </label>
+          </div>
+          <div class="ui-radio">
+            <input id="check-all-random" type="radio" value="1" name="check-random">
+            <label class="ui-btn ui-btn-icon-left ui-radio-off ui-btn-up-c" for="check-all-random" data-theme="a">
+            <span class="ui-btn-inner" aria-hidden="true">
+            <span class="ui-btn-text">전체랜덤짤</span>
+            <span class="ui-icon ui-icon-shadow ui-icon-radio-off"></span>
+            </span>
+            </label>
+          </div>
+          <div class="ui-radio">
+            <input id="check-hint-random" type="radio" value="1" name="check-random">
+            <label class="ui-btn ui-btn-icon-left ui-radio-off ui-btn-up-c" for="check-hint-random" data-theme="a">
+            <span class="ui-btn-inner" aria-hidden="true">
+            <span class="ui-btn-text">힌트랜덤짤</span>
+            <span class="ui-icon ui-icon-shadow ui-icon-radio-off"></span>
+            </span>
+            </label>
+          </div>
+          <div class="ui-radio">
+            <input id="check-select-random" type="radio" value="1" name="check-random">
+            <label class="ui-btn ui-btn-icon-left ui-corner-bottom ui-radio-off ui-btn-up-c" for="check-select-random" data-theme="a">
+            <span class="ui-btn-inner" aria-hidden="true">
+            <span class="ui-btn-text">선택랜덤짤</span>
+            <span class="ui-icon ui-icon-shadow ui-icon-radio-off"></span>
+            </span>
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      </div>
+
+      <div id="hint-random-item" class="ui-field-contain ui-body ui-br" style="display:none;">
+        <label class="ui-input-text" for="write-form-rand-hint">랜덤힌트</label>
+        <input id="write-form-rand-hint" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" type="text" name="rand_hint">
+      </div>
+
+      <div id="select-random-item" class="ui-field-contain ui-body ui-br" style="display:none;">
+        <label class="ui-input-text" for="random-image-select">선택랜덤</label>
+		<div id="random-image-list" style="display: inline-block;"></div>
+	  </div>
+
+      <div class="ui-field-contain ui-body ui-br">
+        <label class="ui-input-text" for="write-form-add-file">첨부파일</label>
+        <input id="write-form-add-file" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" type="file" name="upload_file">
+      </div>
+  
+      <a id="write-button" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-b">
+        <span class="ui-btn-inner ui-btn-corner-all">
+        <span class="ui-btn-text">새글등록</span>
+        <span class="ui-icon ui-icon-plus ui-icon-shadow"></span>
+        </span>
+      </a>
+    </div>
+    </form>
+  </div>
+  <div id="article" class="article-content">
+    <div id="article-list-tool" class="ui-navbar">
+      <ul class="ui-grid-a">
+        <li class="ui-block-a"><a class="ui-btn ui-btn-icon-left ui-btn-up-c" onclick="$(window).scrollTop(0);">
+        <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">상단으로</span><span class="ui-icon ui-icon-arrow-u ui-icon-shadow"></span></span>
+        </a></li>
+        <li class="ui-block-b"><a class="ui-btn ui-btn-icon-left ui-btn-up-c" onclick="$('.article-content').hide();$('#article').show();Client.recent();">
+        <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">새로고침</span><span class="ui-icon ui-btn-icon-left ui-icon-refresh ui-icon-shadow"></span></span>
+        </a></li>
+      </ul>
+    </div>
+	<!--
+	<div><a href="javascript:Client.view(464269);"><img src="http://mintbear.cdn2.cafe24.com/img/banner_jogong_m.jpg" width="100%"/></a></div>
+	-->
+    <ul id="article-list" class="listing"></ul>
+  </div>
+  <div id="notice" class="article-content">
+    <ul id="notice-list" class="listing"></ul>
+  </div>
+  <div id="setting" class="article-content" style="display:none;">
+    <div class="ui-bar-d" style="padding:10px;">
+      <div class="ui-field-contain ui-body ui-br">
+        <label class="ui-input-text" for="setting-article-top">본문 상단</label>
+        <textarea id="setting-article-top" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" name="article_top"></textarea>
+      </div>
+      <div class="ui-field-contain ui-body ui-br">
+        <label class="ui-input-text" for="setting-article-bottom">본문 하단</label>
+        <textarea id="setting-article-bottom" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" name="article_bttom"></textarea>
+      </div>
+      <a id="setting-button" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-b">
+        <span class="ui-btn-inner ui-btn-corner-all">
+        <span class="ui-btn-text">설정하기</span>
+        <span class="ui-icon ui-icon-plus ui-icon-shadow"></span>
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div id="content-container">
+  <div class="ui-navbar">
+    <ul class="ui-grid-b">
+      <li class="ui-block-a"><a class="ui-btn ui-btn-icon-top ui-btn-up-b" onclick="Client.back();">
+      <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">돌아가기</span><span class="ui-icon ui-icon-back ui-icon-shadow"></span></span>
+      </a></li>
+      <li class="ui-block-b"><a class="ui-btn ui-btn-icon-top ui-btn-up-b source" target="_blank">
+      <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">원본링크</span><span class="ui-icon ui-icon-star ui-icon-shadow"></span></span>
+      </a></li>
+      <li class="ui-block-c"><a class="ui-btn ui-btn-icon-top ui-btn-up-b" onclick="Client.article_view.refresh();">
+      <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">새로고침</span><span class="ui-icon ui-icon-refresh ui-icon-shadow"></span></span>
+      </a></li>
+    </ul>
+  </div>
+
+  <div id="content-view"></div>
+  <div id="comments">
+    <ul id="comment-list" class="listing"></ul>
+  </div>
+  <div class="ui-bar-d" style="padding:10px;">
+    <div class="ui-field-contain ui-body ui-br">
+      <label class="ui-input-text" for="comment-name">이름</label>
+      <input id="comment-name" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" type="text">
+    </div>
+    <div class="ui-field-contain ui-body ui-br">
+      <label class="ui-input-text" for="comment-password">비밀번호</label>
+      <input id="comment-password" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" type="password">
+    </div>
+    <div class="ui-field-contain ui-body ui-br">
+      <label class="ui-input-text" for="comment-memo">내용</label>
+      <textarea id="comment-memo" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset"></textarea>
+    </div>
+
+    <div class="ui-grid-a">
+      <div class="ui-block-a">
+        <a id="comment-button" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-b">
+          <span class="ui-btn-inner ui-btn-corner-all">
+          <span class="ui-btn-text">댓글등록</span>
+          <span class="ui-icon ui-icon-plus ui-icon-shadow"></span>
+          </span>
+        </a>
+      </div>
+      <div class="ui-block-b">
+        <a id="comment-kkkk-button" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c">
+          <span class="ui-btn-inner ui-btn-corner-all">
+          <span class="ui-btn-text">ㅋㅋㅋㅋ</span>
+          <span class="ui-icon ui-icon-grid ui-icon-shadow"></span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui-navbar">
+    <ul class="ui-grid-b">
+      <li class="ui-block-a"><a class="ui-btn ui-btn-icon-top ui-btn-up-b" onclick="Client.back();">
+      <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">돌아가기</span><span class="ui-icon ui-icon-back ui-icon-shadow"></span></span>
+      </a></li>
+      <li class="ui-block-b"><a class="ui-btn ui-btn-icon-top ui-btn-up-b source" target="_blank">
+      <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">원본링크</span><span class="ui-icon ui-icon-star ui-icon-shadow"></span></span>
+      </a></li>
+      <li class="ui-block-c"><a class="ui-btn ui-btn-icon-top ui-btn-up-b" onclick="Client.article_view.refresh();">
+      <span class="ui-btn-inner" aria-hidden="true"><span class="ui-btn-text">새로고침</span><span class="ui-icon ui-icon-refresh ui-icon-shadow"></span></span>
+      </a></li>
+    </ul>
+  </div>
+</div>
+
+<div id="gallery-container">
+  <div class="page-toolbar">
+  <ul class="clearfix">
+    <li class="back"><a onclick="Client.back();">돌아가기</a></li>
+    <li class="refresh"><a onclick="Client.gallery_list.refresh();">새로고침</a></li>
+  </ul>
+  </div>
+  <div id="gallery-list"></div>
+  <div class="page-toolbar">
+  <ul class="clearfix">
+    <li class="back"><a onclick="Client.back();">돌아가기</a></li>
+  </ul>
+  </div>
+</div>
+
+<div id="login-page" style="display:none;">
+  <div class="ui-bar-d" style="padding:0 10px;">
+    <div class="ui-field-contain ui-body ui-br">
+      <label class="ui-input-text" for="login-userid">아이디</label>
+      <input id="login-userid" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" type="text">
+    </div>
+    <div class="ui-field-contain ui-body ui-br">
+      <label class="ui-input-text" for="login-password">비밀번호</label>
+      <input id="login-password" class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset" type="password">
+    </div>
+    <div class="ui-grid-a">
+      <div class="ui-block-a">
+        <a id="login-button" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-b">
+          <span class="ui-btn-inner ui-btn-corner-all">
+          <span class="ui-btn-text">로그인</span>
+          <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+          </span>
+        </a>
+      </div>
+      <div class="ui-block-b">
+        <a id="login-cancel-button" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c">
+          <span class="ui-btn-inner ui-btn-corner-all">
+          <span class="ui-btn-text">닫기</span>
+          <span class="ui-icon ui-icon-delete ui-icon-shadow"></span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-footer" class="ui-footer ui-bar-b">
+  <p style="font:9pt 돋움; text-align:center; color:#fff;">ⓒ 2008 - 2014 DCBH.</p>
+</div>

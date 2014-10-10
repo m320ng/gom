@@ -285,10 +285,12 @@ var HttpClient = function () {
 		var req = http.request(options, function(res) {
 			//self.setCookie(res.headers);
 			//self._filter(res.headers);
-			if (opt.cookies) {
-				self._filter(res.headers, opt.cookies);
-			} else {
-				self._filter(res.headers);
+			if (!opt.not_save_cookie) {
+				if (opt.cookies) {
+					self._filter(res.headers, opt.cookies);
+				} else {
+					self._filter(res.headers);
+				}
 			}
 			if (options.encoding == 'binary') {
 				res.on('data', function (chunk) {

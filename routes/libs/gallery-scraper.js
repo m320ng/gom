@@ -2,6 +2,7 @@ var _url = require('url');
 var querystring = require('querystring');
 var cheerio = require('cheerio');
 var async = require('async');
+var http = require('http');
 
 var HttpClient = require('./http-client');
 
@@ -242,7 +243,7 @@ module.exports = {
 		var tasks = [];
 
 		tasks.push(function(next) {
-			engine.request({host:'dcid.dcinside.com', path:'/join/login.php?s_url=http%3A%2F%2Fgall.dcinside.com'}, function(err, body, header) {
+			engine.request({host:'dcid.dcinside.com', path:'/join/login.php?s_url=http%3A%2F%2Fgall.dcinside.com', not_save_cookie:true}, function(err, body, header) {
 				if (err) return callback(err, '연결오류가 발생하였습니다.');
 				//console.log(header);
 				if (header['set-cookie']) {
@@ -268,7 +269,7 @@ module.exports = {
 				'ssl_chk':'on',
 			};
 			var referer = 'http://dcid.dcinside.com/join/login.php?s_url=http%3A%2F%2Fgall.dcinside.com';
-			engine.request({host:'dcid.dcinside.com', path:'/join/member_check.php', post:querystring.stringify(data), encoding:'utf-8', referer:referer, cookies:cookies}, function(err, body, header) {
+			engine.request({host:'dcid.dcinside.com', path:'/join/member_check.php', post:querystring.stringify(data), encoding:'utf-8', referer:referer, cookies:cookies, not_save_cookie:true}, function(err, body, header) {
 				//console.log(body);
 				console.log(header);
 				if (!err && header) {

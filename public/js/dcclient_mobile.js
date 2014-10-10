@@ -628,9 +628,6 @@ Comment.prototype = {
 		var row = $('<li></li>');
 		var self = this;
 
-		//filter
-		if (comment.content.match(/그 유명한 왕슴가/)) return;
-
 		comment.userpic = '';
 		if (comment.userid) {
 			comment.userpic = '<span class="pic"><a class="userpic" href="http://gallog.dcinside.com/'+comment.userid+'" target="_blank"><img width="50" height="50" src="http://img.gom.heyo.me/userpic.php?userid='+comment.userid+'"/></a></span>'
@@ -643,7 +640,7 @@ Comment.prototype = {
 
 		if (comment.content) {
 			comment.content = comment.content.replace(/(㉳[ ]?[0-9]+\.[0-9]+)/g, '<span style="color:#dedede;">$1</span>');
-			comment.content = comment.content.replace(/(http:\/\/[a-zA-Z0-9&%;.?/=]+)/g, '<a href="\1">\1</a>');
+			comment.content = comment.content.replace(/(http:\/\/[a-zA-Z0-9&%;.?/=]+)/g, '<a href="$1" style="text-decoration:underline;" target="_blank">$1</a>');
 		}
 
 		var html = [
@@ -961,6 +958,7 @@ ArticleView.prototype = {
 		//);
 
 		if (layer.get().length) {
+			this.article.content = this.article.content_hint;
 			var article = Client.article_list.decoArticle(this.article);
 
 //			layer.find('.pic').html(article.userpic);
