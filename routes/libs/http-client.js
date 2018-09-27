@@ -113,23 +113,38 @@ var HttpClient = function () {
 		}
 	};
 
-	this.download = function (host, path, destfile, encoding, callback) {
+	this.download = function (opt, destfile, callback) {
 		var options = {
-			host: host,
 			port: 80,
-			path: path,
+			path: '/',
 			encoding: 'binary',
 			method: 'GET',
 			headers: {},
 		};
-		util._extend(options.headers, _headers);
-		options.headers['Host'] = host;
-		options.headers['Cookie'] = this.cookie();
-		if (this._referer) {
-			console.log(this._referer);
-			options.headers['Referer'] = this._referer;
+		options.hostname = opt.host;
+		if (opt.path) options.path = opt.path;
+		if (opt.port) options.port = opt.port;
+		if (opt.method) options.method = opt.method;
+		if (opt.headers) {
+			util._extend(options.headers, opt.headers);
+		} else {
+			util._extend(options.headers, _headers);
 		}
-		delete options.headers['Content-Type'];
+		if (opt.addheaders) util._extend(options.headers, opt.addheaders);
+		if (opt.encoding && 'euckr,euc-kr'.indexOf(opt.encoding.toLowerCase())!=-1) {
+			options['encoding'] = 'binary';
+		}
+		if (opt.referer) {
+			options.headers['Referer'] = opt.referer;
+		}
+		if (opt.cookies) {
+			var cookie_str = querystring.stringify(opt.cookies).replace(/&/g, '; ');
+			options.headers['Cookie'] = cookie_str;
+		} else {
+			options.headers['Cookie'] = this.cookie();
+		}
+		options.headers['Host'] = opt.host;
+		options.headers['Path'] = opt.path;
 
 		var filename = '';
 		var req = http.request(options, function(res) {
@@ -153,7 +168,7 @@ var HttpClient = function () {
 					if (filename[0]=="'" && filename[filename.length-1]=="'") {
 						filename = filename.substring(1, filename.length-1);
 					}
-					if (encoding=='utf8' || encoding=='utf-8') {
+					if (opt.encoding=='utf8' || opt.encoding=='utf-8') {
 						filename = decodeURIComponent(filename);
 					}
 				}
@@ -165,7 +180,7 @@ var HttpClient = function () {
 				return;
 			}
 
-			if (host.indexOf('img1.dcinside.com')!=-1) {
+			if (opt.host.indexOf('img1.dcinside.com')!=-1) {
 				var file = fs.createWriteStream(destfile);
 				res.once('data', function(chunk) {
 					//console.log('got %d bytes of data', chunk.length);

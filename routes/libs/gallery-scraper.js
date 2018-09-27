@@ -86,7 +86,9 @@ module.exports = {
 							data.name = td.text().trim();
 							data.date = $('td.t_date', this).text().trim();
 							data.hit_count = $('td.t_hits', this).first().text().trim();
-							result.push(data);
+							if (data.subject && data.name) {
+								result.push(data);
+							}
 						}
 					}
 				}
@@ -463,8 +465,13 @@ module.exports = {
 			var src = $('#ProfileImg').attr('src');
 			console.log(src);
 			var uri = _url.parse(src);
-			engine.download(uri.host, uri.path, destfile, 'utf-8', function(err, result) {
-				if (err) return callback(null);
+			console.log(destfile);
+			var referer = 'http://gall.dcinside.com/board/list/?id='+gallid;
+			engine.download({host:uri.host, path:uri.path, referer:referer, encoding:'utf-8'}, destfile, function(err, result) {
+				if (err) {
+					console.log(result);
+					return callback(null);
+				}
 				callback(result);
 			});
 		});
@@ -472,7 +479,7 @@ module.exports = {
 
 	download: function(url, destfile, callback) {
 		var uri = _url.parse(url);
-		engine.download(uri.host, uri.path, destfile, 'utf-8', callback);
+		engine.download({host:uri.host, path:uri.path, encoding:'utf-8'}, destfile, callback);
 	}, 
 
 	// util

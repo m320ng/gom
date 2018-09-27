@@ -93,7 +93,7 @@ BaseArticle.prototype = {
 		var article = $.extend({}, pure);
 
 		if (article.userid) {
-			article.userpic = '<span class="pic"><a class="userpic" href="http://gallog.dcinside.com/'+article.userid+'" target="_blank"><img width="50" height="50" src="http://img.gom.heyo.me/userpic.php?userid='+article.userid+'"/></a></span>'
+			article.userpic = '<span class="pic"><a class="userpic" href="http://gallog.dcinside.com/'+article.userid+'" target="_blank"><img src="http://gom.heyo.me/articles/userpic/'+article.userid+'" width="50" height="50" style="width:50px; height:50px;"/></a></span>'
 			article.name = '<span class="nic">'+article.name+'</span>';
 		} else if (article.is_notice==1) {
 			article.userpic = '<span class="pic"><a class="nouser">Notice</a></span>'
@@ -631,7 +631,7 @@ Comment.prototype = {
 
 		comment.userpic = '';
 		if (comment.userid) {
-			comment.userpic = '<span class="pic"><a class="userpic" href="http://gallog.dcinside.com/'+comment.userid+'" target="_blank"><img width="50" height="50" src="http://img.gom.heyo.me/userpic.php?userid='+comment.userid+'"/></a></span>'
+			comment.userpic = '<span class="pic"><a class="userpic" href="http://gallog.dcinside.com/'+comment.userid+'" target="_blank"><img width="50" height="50" src="http://gom.heyo.me/articles/userpic/'+comment.userid+'"/></a></span>'
 			comment.name = '<span class="nic">'+comment.name+'</span>';
 		} else {
 			comment.userpic = '<span class="pic"><a class="nouser">'+(comment.ip?comment.ip:'')+'&nbsp;</a></span>'

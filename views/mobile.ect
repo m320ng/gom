@@ -1,6 +1,6 @@
 <% extend 'mobile_layout' %>
 
-<link rel="stylesheet" type="text/css" href="http://sub.heyo.me/heyo.me/css/mobile/style.css"/>
+<link rel="stylesheet" type="text/css" href="http://guoo.net/heyo.me/css/mobile/style.css"/>
 <script type="text/javascript" src="/js/dcclient_mobile.js"></script>
 <script type="text/javascript">
 $(function() {
@@ -12,6 +12,29 @@ $(function() {
 		article.content = article.content.replace(/width=[0-9]+/gi, 'width=320');
 	}
 	Client.article_view.afterRender = function(article) {
+		$('#content-view img').each(function() {
+			$(this)[0].removeAttribute('width');
+			$(this)[0].removeAttribute('height');
+
+			var self = this;
+			var src = $(this).attr('src');
+			if (!src) src = '';
+			if (!$(this)) return;
+			if (src.indexOf('dcimg2.dcinside.co.kr')!=-1) {
+				var url = $(self).attr('src');
+				var src = url.replace(/dcimg2\.dcinside\.co\.kr/g, 'image.dcinside.com');
+				$(this).hide().after(
+					$('<img/>').attr('src', src)
+				);				
+			} else if (src.indexOf('dcimg1.dcinside.co.kr')!=-1) {
+				var url = $(self).attr('src');
+				var src = url.replace(/dcimg1\.dcinside\.co\.kr/g, 'image.dcinside.com');
+				$(this).hide().after(
+					$('<img/>').attr('src', src)
+				);
+			}
+		});
+
 		$('#content-view img').each(function() {
 			if ($(this).width() > 320) $(this).width(320);
 			$(this).load(function() {

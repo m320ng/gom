@@ -146,12 +146,15 @@ function _image_list(content) {
 	var image_list = [];
 	$('img').each(function() {
 		var src = $(this).attr('src');
+		if (!src) return;
 		if (src.indexOf('http://wstatic.dcinside.com')!=-1) return;
 		if (src.indexOf('http://zzbang.dcinside.com')!=-1) return;
 		if (src.indexOf('http://heyo.me/logo.php')!=-1) return;
 
 		src = src.replace(/dcimg2\.dcinside\.com\/viewimage\.php/g, 'image.dcinside.com/viewimage.php');
 		src = src.replace(/dcimg1\.dcinside\.com\/viewimage\.php/g, 'image.dcinside.com/viewimage.php');
+		src = src.replace(/dcimg2\.dcinside\.co.kr\/viewimage\.php/g, 'image.dcinside.com/viewimage.php');
+		src = src.replace(/dcimg1\.dcinside\.co.kr\/viewimage\.php/g, 'image.dcinside.com/viewimage.php');
 		//src = src.replace(/img2\.dcinside\.com\/viewimage\.php/g, 'image.dcinside.com/viewimage.php');
 		//src = src.replace(/img1\.dcinside\.com\/viewimage\.php/g, 'image.dcinside.com/viewimage.php');
 		src = src.replace(/&amp;/g, '&');
@@ -1093,8 +1096,10 @@ router.get('/userpic/:id?', function(req, res) {
 	res.end();
 });
 
-router.get('/userpic_old/:id?', function(req, res) {
-	var baseimg = 'http://mintbear.cdn2.cafe24.com/img/user.jpg';
+*/
+
+router.get('/userpic/:id?', function(req, res) {
+	var baseimg = 'http://img.gom.heyo.me/img/user.jpg';
 	var userid = req.params.id;
 	var userimg = '/home/gom/www/img/user.jpg';
 	var picfile = '/home/gom/www/files/user/'+userid+'.jpg';
@@ -1102,7 +1107,7 @@ router.get('/userpic_old/:id?', function(req, res) {
 	var tmpfile = __dirname+'/../tmp/user_'+userid+'.jpg';
 
 	var render = function() {
-		var file = fs.createReadStream(picfile);
+		var file = fs.createReadStream(picfile50);
 		file.on('end', function() {
 			console.log('end');
 			res.end();
@@ -1133,9 +1138,12 @@ router.get('/userpic_old/:id?', function(req, res) {
 					im.resize({
 						srcPath: tmpfile,
 						dstPath: picfile50,
-						width: 50,
-						height: 50,
+						format: 'jpg',
+						strip: false,
+						width: 120,
+						height: 120,
 						quality: 0.8,
+						sharpening: 0.2,
 					}, function(error, stdout, stderror) {
 						if (error) {
 							console.error(error);
@@ -1152,6 +1160,5 @@ router.get('/userpic_old/:id?', function(req, res) {
 		render();
 	}
 });
-*/
 
 module.exports = router;

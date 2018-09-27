@@ -16,19 +16,19 @@
 <style type="text/css">
 @font-face {font-family:NanumGothic; src:url(/img/NanumGothic.eot);}
 </style>
-<link rel="stylesheet" type="text/css" href="http://sub.heyo.me/heyo.me/css/webpage.css" />
-<link rel="stylesheet" type="text/css" href="http://sub.heyo.me/heyo.me/css/jquery/redmond/jquery-ui-1.8.4.custom.css" />
-<link rel="stylesheet" type="text/css" href="http://sub.heyo.me/heyo.me/js/jquery/lightbox/css/jquery.lightbox-0.5.css" />
-<link rel="stylesheet" type="text/css" href="http://sub.heyo.me/heyo.me/css/web/style.css"/>
+<link rel="stylesheet" type="text/css" href="http://gom.heyo.me/pc/css/webpage.css" />
+<link rel="stylesheet" type="text/css" href="http://gom.heyo.me/pc/css/jquery/redmond/jquery-ui-1.8.4.custom.css" />
+<link rel="stylesheet" type="text/css" href="http://gom.heyo.me/pc/js/jquery/lightbox/css/jquery.lightbox-0.5.css" />
+<link rel="stylesheet" type="text/css" href="http://gom.heyo.me/pc/css/web/style.css"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/jquery/jquery.ui.datepicker-ko.js"></script>
-<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/jquery/lightbox/jquery.lightbox.js"></script>
-<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/jquery/blockUI/jquery.blockUI.js"></script>
-<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/jquery/jquery.cookie.js"></script>
-<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/jquery/ajaxfileupload.js"></script>
-<script type="text/javascript" src="http://sub.heyo.me/heyo.me/js/common.js"></script>
+<script type="text/javascript" src="http://gom.heyo.me/pc/js/jquery/jquery.form.js"></script>
+<script type="text/javascript" src="http://gom.heyo.me/pc/js/jquery/jquery.ui.datepicker-ko.js"></script>
+<script type="text/javascript" src="http://gom.heyo.me/pc/js/jquery/lightbox/jquery.lightbox.js"></script>
+<script type="text/javascript" src="http://gom.heyo.me/pc/js/jquery/blockUI/jquery.blockUI.js"></script>
+<script type="text/javascript" src="http://gom.heyo.me/pc/js/jquery/jquery.cookie.js"></script>
+<script type="text/javascript" src="http://gom.heyo.me/pc/js/jquery/ajaxfileupload.js"></script>
+<script type="text/javascript" src="http://gom.heyo.me/pc/js/common.js"></script>
 <!--[if IE 6]>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -90,7 +90,7 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
-<script type="text/javascript" src="/js/dcclient_index.js"></script>
+<script type="text/javascript" src="/js/dcclient_index.js?_=0.13"></script>
 <!--
 <script type="text/javascript" src="/jwplayer/jwplayer.js"></script>
 -->
@@ -108,7 +108,20 @@ $(function() {
 			var src = $(this).attr('src');
 			if (!src) src = '';
 			if (!$(this)) return;
-			if (src.indexOf('heyo.me')==-1) {
+			if (src.indexOf('dcimg2.dcinside.co.kr')!=-1) {
+				var url = $(self).attr('src');
+				//var src = 'http://dcimg2.dcinside.com.heyo.me/viewimage.php?url='+encodeURIComponent(url);
+				var src = url.replace(/dcimg2\.dcinside\.co\.kr/g, 'image.dcinside.com');
+				$(this).hide().after(
+					$('<img/>').attr('src', src)
+				);				
+			} else if (src.indexOf('dcimg1.dcinside.co.kr')!=-1) {
+				var url = $(self).attr('src');
+				var src = url.replace(/dcimg1\.dcinside\.co\.kr/g, 'image.dcinside.com');
+				$(this).hide().after(
+					$('<img/>').attr('src', src)
+				);				
+			} else if (src.indexOf('heyo.me')==-1) {
 				$(this).one('error', function() {
 					$(this).after($('<a href="'+$(this).attr('src')+'" style="color:#c8c8c8;font:8pt tahoma;" target="_blank">'+$(this).attr('src')+'</a>'));
 					$(this).after($('<span style="color:#c8c8c8;"><img src="/img/image-proxy2.gif"/></span>').click(function() {
@@ -120,7 +133,7 @@ $(function() {
 					}));
 					$(this).after($('<span style="color:#c8c8c8;"><img src="/img/image-proxy1.gif"/></span>').click(function() {
 						var url = $(self).attr('src');
-						var src = 'http://sub.heyo.me/image_proxy.php?url='+encodeURIComponent(url);
+						var src = 'http://guoo.net/image_proxy.php?url='+encodeURIComponent(url);
 						$(this).html('').append(
 							$('<img/>').attr('src', src)
 						);
@@ -259,7 +272,7 @@ function timetrip() {
         <li><a href="http://gall.dcinside.com/list.php?id=hwawon" target="_blank">DC갤러리</a></li>
         <li><a href="http://gall.dcinside.com/list.php?id=firejung" target="_blank">DC불의여신정이</a></li>
 		<!--
-        <li><a href="http://sub.heyo.me/main/hwawon/search.php" target="_blank">검색기</a></li>
+        <li><a href="http://guoo.net/main/hwawon/search.php" target="_blank">검색기</a></li>
 		-->
         <li><a href="http://www.youtube.com/dcbhnet" target="_blank">YOUTUBE</a></li>
       </ul>
@@ -305,6 +318,7 @@ function timetrip() {
 		    <input type="file" class="file" id="add-file" name="upload_file" style="width:300px;"/><br/>
 			<input type="checkbox" class="checkbox" id="check-all-random"/><label for="check-all-random"> 진짜랜덤짤</label> (※주의※ 혐짤이나올수있음ㅇㅇ)<br/>
 			<input type="checkbox" class="checkbox" id="check-hint-random"/><label for="check-hint-random"> 힌트랜덤짤</label> 힌트:<input type="text" class="text" id="random-hint" name="rand_hint" size="10"/><br/>
+			<!--
 			<input type="checkbox" class="checkbox" id="check-capture"/><label for="check-capture"> 캡쳐짤 (테스트중)</label>
 			<input type="hidden" id="select-movie" value=""/>
 			<input type="hidden" id="select-movie-name" value=""/>
@@ -336,6 +350,7 @@ function timetrip() {
 			<div id="container-movie">Loading the player ...</div>
 			</div>
 			<br/>
+			-->
 			<input type="button" id="add-button" value="새글등록"/></br>
 		  </td>
 		</tr>
@@ -438,12 +453,14 @@ function timetrip() {
   <tr>
     <td>
     <div id="footer">
+      <!--
       <ul class="family-link">
         <li><a href="http://www.namoo.com" target="_blank">페밀리사이트1</a></li>
         <li><a href="http://chaewon.com" target="_blank">페밀리사이트2</a></li>
       </ul>
+      -->
       <div class="copyright">
-      Copyright ⓒ 2008 - 2014 DCBH. All rights reserved
+      ⓒ DCBH <span style="color:#bbb;">| rev. 2017.04.01</span>
       </div>
     </div>
 	</td>
